@@ -14,13 +14,13 @@ class OrderManagementServiceFIX {
 
     public void submitOrder(FixOrder order) {
         orders.put(order.getOrderId(), order);
-        System.out.println("[Submitting FIX Order] " + order.getOrderId());
+       System.out.println("[Submitting FIX Order] " + order.getOrderId());
         fixSession.sendFixMessage(order.toFixMessage());
     }
 
     // Called when FIX messages (execution reports, etc) come back
     private void onFixMessageReceived(String fixMsg) {
-        System.out.println("[FIX Msg Received] " + fixMsg);
+       System.out.println("[FIX Msg Received] " + fixMsg);
         FixMessage msg = FixMessage.parse(fixMsg);
         if ("8".equals(msg.getMsgType())) { // Execution Report
             String clOrdId = msg.getField("11");

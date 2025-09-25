@@ -68,7 +68,7 @@ class FixOrder extends Order {
         @Override
         public void processOrder(Price marketPrice) {
             // For FIX, order status comes asynchronously, no internal price processing here.
-            System.out.println("[FIX Order] Waiting for execution reports...");
+           System.out.println("[FIX Order] Waiting for execution reports...");
         }
 
         @Override

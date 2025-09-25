@@ -13,11 +13,12 @@ public class FixMain {
 
         // Register a listener to get notified when order completes
         fixOrder.setOrderCompletionListener(order ->
-                System.out.println("[Order Completed] " + order.getOrderId() + " status: " + order.getStatus()));
+               System.out.println("[Order Completed] " + order.getOrderId() + " status: " + order.getStatus()));
         // Keep app running to simulate async message flow
         Thread.sleep(15000);
 
         fixSession.close();
+
         System.exit(0);
     }
 }

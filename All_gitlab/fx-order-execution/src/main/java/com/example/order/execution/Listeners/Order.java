@@ -42,7 +42,7 @@ abstract class Order {
         this.executedPrice = executedPrice;
         this.executedQuantity = executedQuantity;
         this.executionTime = Instant.now();
-        System.out.println("[Executed] Order " + orderId + " at price " + executedPrice + " quantity " + executedQuantity);
+       System.out.println("[Executed] Order " + orderId + " at price " + executedPrice + " quantity " + executedQuantity);
     }
 
     public void setOrderCompletionListener(Consumer<Order> listener) {

@@ -12,9 +12,9 @@ class LoopOrder extends Order {
     public void processOrder(Price marketPrice) {
         if (executionCount < maxExecutions) {
             executionCount++;
-            System.out.println("[Executed] Loop Order " + orderId + " - execution " + executionCount + " at price: " + marketPrice.getPrice());
+           System.out.println("[Executed] Loop Order " + orderId + " - execution " + executionCount + " at price: " + marketPrice.getPrice());
         } else {
-            System.out.println("[Completed] Loop Order " + orderId);
+           System.out.println("[Completed] Loop Order " + orderId);
         }
     }
 
