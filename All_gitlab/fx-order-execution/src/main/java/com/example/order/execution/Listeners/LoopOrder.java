@@ -24,7 +24,7 @@ class LoopOrder extends Order {
     @Override
     public void processOrder(Price marketPrice) {
         // Just a placeholder: in a real system, this might send legs downstream
-        System.out.println("[LoopOrder] " + orderId + " awaiting leg executions...");
+       System.out.println("[LoopOrder] " + orderId + " awaiting leg executions...");
     }
 
     public void onLegExecuted(String legId, double executedPrice, double executedQuantity) {

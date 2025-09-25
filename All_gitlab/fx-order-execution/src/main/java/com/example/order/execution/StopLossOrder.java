@@ -15,15 +15,15 @@ class StopLossOrder extends Order {
         if (!triggered) {
             if (marketPrice.getPrice() <= stopPrice) { // Trigger condition (for sell side)
                 triggered = true;
-                System.out.println("[Triggered] Stop Loss Order " + orderId + " at stop price: " + stopPrice);
+               System.out.println("[Triggered] Stop Loss Order " + orderId + " at stop price: " + stopPrice);
             } else {
-                System.out.println("[Waiting] Stop Loss Order " + orderId + " - current price: " + marketPrice.getPrice());
+               System.out.println("[Waiting] Stop Loss Order " + orderId + " - current price: " + marketPrice.getPrice());
             }
         }
 
         if (triggered && !executed) {
             executed = true;
-            System.out.println("[Executed] Stop Loss Order " + orderId + " at market price: " + marketPrice.getPrice());
+           System.out.println("[Executed] Stop Loss Order " + orderId + " at market price: " + marketPrice.getPrice());
         }
     }
 

@@ -26,8 +26,8 @@ public class Main {
         LoopOrder loopOrder = new LoopOrder("ORD456", legs);
 
         // Register listeners for leg and order updates
-        loopOrder.setLegExecutionListener(leg -> System.out.println("[Callback] Leg executed: " + leg));
-        loopOrder.setOrderCompletionListener(order -> System.out.println("[Callback] LoopOrder COMPLETED: " + order.getOrderId()));
+        loopOrder.setLegExecutionListener(leg ->System.out.println("[Callback] Leg executed: " + leg));
+        loopOrder.setOrderCompletionListener(order ->System.out.println("[Callback] LoopOrder COMPLETED: " + order.getOrderId()));
 
         oms.submitOrder(loopOrder);
 

@@ -14,7 +14,7 @@ class OrderManagementService {
 
     public void submitOrder(Order order) {
         pendingOrders.put(order.getOrderId(), order);
-        System.out.println("[Order Submitted] " + order.getOrderId());
+       System.out.println("[Order Submitted] " + order.getOrderId());
     }
 
     public void processPrice(Price price) {
@@ -26,7 +26,7 @@ class OrderManagementService {
     public void processExecutionReport(ExecutionReport report) {
         Order order = pendingOrders.get(report.getOrderId());
         if (order == null) {
-            System.out.println("[Warning] Execution report for unknown orderId: " + report.getOrderId());
+           System.out.println("[Warning] Execution report for unknown orderId: " + report.getOrderId());
             return;
         }
 
@@ -41,7 +41,7 @@ class OrderManagementService {
 
         if (order.isCompleted()) {
             pendingOrders.remove(order.getOrderId());
-            System.out.println("[Order Completed] " + order.getOrderId());
+           System.out.println("[Order Completed] " + order.getOrderId());
             order.onOrderCompleted();
         }
     }

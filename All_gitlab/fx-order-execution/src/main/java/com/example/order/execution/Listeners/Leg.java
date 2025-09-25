@@ -46,7 +46,7 @@ class Leg {
         this.executedPrice = executedPrice;
         this.executedQuantity = executedQuantity;
         this.executionTime = Instant.now();
-        System.out.println("[Executed] Leg " + legId + " at price " + executedPrice + " quantity " + executedQuantity);
+       System.out.println("[Executed] Leg " + legId + " at price " + executedPrice + " quantity " + executedQuantity);
 
         if (legExecutionListener != null) {
             legExecutionListener.accept(this);

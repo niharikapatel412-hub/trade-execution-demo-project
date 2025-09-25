@@ -44,7 +44,7 @@ class FixSession {
             });
             readerThread.start();
 
-            System.out.println("[FIX Session] Connected to downstream execution system");
+           System.out.println("[FIX Session] Connected to downstream execution system");
         } catch (IOException e) {
             throw new RuntimeException("Failed to connect to FIX server", e);
         }
@@ -52,7 +52,7 @@ class FixSession {
 
     public void sendFixMessage(FixMessage msg) {
         String fixStr = msg.serialize();
-        System.out.println("[Sending FIX] " + fixStr);
+       System.out.println("[Sending FIX] " + fixStr);
         out.println(fixStr);
     }
 
@@ -64,7 +64,7 @@ class FixSession {
         running = false;
         try {
             if (socket != null) socket.close();
-            System.out.println("[FIX Session] Closed");
+           System.out.println("[FIX Session] Closed");
         } catch (IOException e) {
             e.printStackTrace();
         }

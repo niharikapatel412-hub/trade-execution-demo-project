@@ -7,10 +7,10 @@ import java.net.Socket;
 public class MockPriceServer {
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(5050);
-        System.out.println("Mock Price Server started on port 5050...");
+       System.out.println("Mock Price Server started on port 5050...");
 
         Socket clientSocket = serverSocket.accept();
-        System.out.println("Client connected.");
+       System.out.println("Client connected.");
 
         PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 

@@ -17,18 +17,18 @@ class StopLimitOrder extends Order {
         if (!triggered) {
             if (marketPrice.getPrice() <= stopPrice) { // Trigger condition (for sell side)
                 triggered = true;
-                System.out.println("[Triggered] Stop Limit Order " + orderId + " at stop price: " + stopPrice);
+               System.out.println("[Triggered] Stop Limit Order " + orderId + " at stop price: " + stopPrice);
             } else {
-                System.out.println("[Waiting] Stop Limit Order " + orderId + " - current price: " + marketPrice.getPrice());
+               System.out.println("[Waiting] Stop Limit Order " + orderId + " - current price: " + marketPrice.getPrice());
             }
         }
 
         if (triggered && !executed) {
             if (marketPrice.getPrice() <= limitPrice) {
                 executed = true;
-                System.out.println("[Executed] Stop Limit Order " + orderId + " at limit price: " + marketPrice.getPrice());
+               System.out.println("[Executed] Stop Limit Order " + orderId + " at limit price: " + marketPrice.getPrice());
             } else {
-                System.out.println("[Waiting Execution] Stop Limit Order " + orderId + " - market price above limit price.");
+               System.out.println("[Waiting Execution] Stop Limit Order " + orderId + " - market price above limit price.");
             }
         }
     }

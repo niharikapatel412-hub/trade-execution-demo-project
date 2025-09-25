@@ -13,9 +13,9 @@ public class LimitOrder extends Order {
     public void processOrder(Price marketPrice) {
         if (!executed && marketPrice.getPrice() <= limitPrice) {
             executed = true;
-            System.out.println("[Executed] Limit Order " + orderId + " at price: " + marketPrice.getPrice());
+           System.out.println("[Executed] Limit Order " + orderId + " at price: " + marketPrice.getPrice());
         } else if (!executed) {
-            System.out.println("[Pending] Limit Order " + orderId);
+           System.out.println("[Pending] Limit Order " + orderId);
         }
     }
 
