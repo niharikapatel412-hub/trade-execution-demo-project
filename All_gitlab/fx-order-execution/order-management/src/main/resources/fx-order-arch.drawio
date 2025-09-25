@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.2.5">
+  <diagram name="FX Order Execution Architecture" id="fx-oms-arch">
+    <mxGraphModel dx="1113" dy="758" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ui" value="UI (Order API + Dashboard)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8BC34A;" parent="1" vertex="1">
+          <mxGeometry x="40" y="80" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="oms" value="Order Service (OMS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#03A9F4;" parent="1" vertex="1">
+          <mxGeometry x="280" y="80" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="price" value="Price Service (SSE/REST)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFC107;" parent="1" vertex="1">
+          <mxGeometry x="280" y="220" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="fix" value="FIX Server (Execution Venue)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E91E63;" parent="1" vertex="1">
+          <mxGeometry x="520" y="80" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="solace" value="Solace Bus (Future)" style="dashed=1;rounded=1;whiteSpace=wrap;html=1;fillColor=#9C27B0;" parent="1" vertex="1">
+          <mxGeometry x="280" y="340" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="pending" value="PENDING" style="ellipse;whiteSpace=wrap;html=1;fillColor=#90CAF9;" parent="1" vertex="1">
+          <mxGeometry x="800" y="40" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="submitted" value="SUBMITTED" style="ellipse;whiteSpace=wrap;html=1;fillColor=#64B5F6;" parent="1" vertex="1">
+          <mxGeometry x="800" y="110" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="completed" value="COMPLETED / CANCELLED / REJECTED" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1976D2;" parent="1" vertex="1">
+          <mxGeometry x="750" y="210" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" style="endArrow=block;" parent="1" source="ui" target="oms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" style="endArrow=block;" parent="1" source="price" target="oms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" style="endArrow=block;" parent="1" source="oms" target="fix" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" style="endArrow=block;" parent="1" source="fix" target="oms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" style="dashed=1;endArrow=block;" parent="1" source="solace" target="oms" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" style="dashed=1;endArrow=block;" parent="1" source="price" target="solace" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" style="endArrow=block;" parent="1" source="pending" target="submitted" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" style="endArrow=block;" parent="1" source="submitted" target="completed" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lFBxGGujYMIz4K1OrklA-1" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Realistic FX order execution simulator&lt;/h1&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="190" y="480" width="480" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="lFBxGGujYMIz4K1OrklA-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="lFBxGGujYMIz4K1OrklA-1" target="lFBxGGujYMIz4K1OrklA-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

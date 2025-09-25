@@ -1,0 +1,13 @@
+id,text,type,fillColor
+1,UI (Order API + Dashboard),shape,#8BC34A
+2,Order Service (OMS),shape,#03A9F4
+3,Price Service (SSE/REST),shape,#FFC107
+4,FIX Server (Execution Venue),shape,#E91E63
+5,Solace Bus (Future),shape,#9C27B0
+6,PENDING,state,#90CAF9
+7,SUBMITTED,state,#64B5F6
+8,COMPLETED / CANCELLED / REJECTED,state,#1976D2
+9,Project Progress: Done\n- Price Service Mock\n- Order Service Core\n- FIX Server Mock\n- Lifecycle Basics,shape,#4CAF50
+10,Project Progress: In Progress\n- Order state tracking\n- Logs\n- REST APIs,shape,#FF9800
+11,Project Progress: Next\n- Solace integration\n- UI Monitoring\n- DB Persistence,shape,#F44336
+12,User places order via UI,arrow,#000000
