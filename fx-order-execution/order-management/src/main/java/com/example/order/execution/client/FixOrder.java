@@ -1,14 +1,13 @@
 package com.example.order.execution.client;
 
-
-
 import com.example.order.execution.models.Order;
 import com.example.order.execution.models.OrderStatus;
 import com.example.order.execution.models.OrderType;
 import com.example.order.execution.models.Price;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Consumer;
-
+@Slf4j
 public class FixOrder extends Order {
     private final String symbol;
     private final OrderType orderType;
@@ -27,7 +26,7 @@ public class FixOrder extends Order {
     @Override
     public void processOrder(Price marketPrice) {
         // FIX orders wait for external execution reports instead of matching internally
-        System.out.println("[FIX Order] Waiting for execution reports...");
+        log.info("[FIX Order] Waiting for execution reports...");
     }
 
     @Override
@@ -97,5 +96,6 @@ public class FixOrder extends Order {
     }
 
     public void markAsSubmitted() {
+        this.status = OrderStatus.SUBMITTED;
     }
 }

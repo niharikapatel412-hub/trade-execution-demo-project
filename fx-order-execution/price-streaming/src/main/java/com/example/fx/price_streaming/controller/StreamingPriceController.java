@@ -3,6 +3,7 @@ package com.example.fx.price_streaming.controller;
 import com.example.fx.price_streaming.model.Price;
 import com.example.fx.price_streaming.service.SolacePublisher;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +50,7 @@ public class StreamingPriceController {
     public void publishMockPrice() {
         double price = 1.1200 + (Math.random() - 0.5) * 0.01;
         Price p = new Price(price);
-        System.out.println("[Price Service] Publishing price: " + price);
+        log.info("[Price Service] Publishing price: " + price);
         SolacePublisher.publishPrice(p);  // <-- publisher is here
     }
 

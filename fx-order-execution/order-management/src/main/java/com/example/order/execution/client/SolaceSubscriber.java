@@ -3,25 +3,13 @@ package com.example.order.execution.client;
 
 import com.example.order.execution.models.Price;
 import com.example.order.execution.services.OrderService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Slf4j
 public class SolaceSubscriber {
-//    public static void subscribeToPriceUpdates(OrderService oms) {
-//        new Thread(() -> {
-//            try {
-//                while (true) {
-//                 //   Price price = SolcePublisher.getPriceQueue().take();
-//                    oms.processPrice(price);
-//                }
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }).start();
-//    }
-
-
 
     public static void subscribeToPriceUpdates(OrderService oms, RestTemplate restTemplate) {
         new Thread(() -> {
@@ -35,7 +23,7 @@ public class SolaceSubscriber {
 
                     if (latestPrice != null) {
                         oms.processPrice(new Price(latestPrice));
-                        System.out.println("[OrderService] Processed price: " + latestPrice);
+                        log.info("[OrderService] Processed price: " + latestPrice);
                     }
 
                     Thread.sleep(2000); // Poll every 2 seconds
