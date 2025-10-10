@@ -74,7 +74,7 @@ Here are some basic APIs you can use to interact with the system:
 
 ### Order Management APIs
 1. **Place an Order**  
-   **POST** `/api/orders`  
+   **POST** `/orders/place`  
    **Request Body**:
    ```json
    {
