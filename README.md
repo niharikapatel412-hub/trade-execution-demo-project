@@ -93,36 +93,6 @@ Here are some basic APIs you can use to interact with the system:
    }
    ```
 
-2. **Get All Orders**  
-   **GET** `/api/orders`  
-   **Response**:
-   ```json
-   [
-       {
-           "orderId": "ORD123",
-           "symbol": "EUR/USD",
-           "quantity": 100,
-           "price": 1.1234,
-           "side": "BUY",
-           "status": "EXECUTED"
-       }
-   ]
-   ```
-
-3. **Get Order by ID**  
-   **GET** `/api/orders/{orderId}`  
-   **Response**:
-   ```json
-   {
-       "orderId": "ORD123",
-       "symbol": "EUR/USD",
-       "quantity": 100,
-       "price": 1.1234,
-       "side": "BUY",
-       "status": "EXECUTED"
-   }
-   ```
-
 ## Notes
 - Ensure all modules are running in the correct sequence to avoid errors.
 - The FIX server handles incoming FIX messages and sends execution reports.
