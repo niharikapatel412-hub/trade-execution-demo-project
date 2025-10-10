@@ -1,15 +1,12 @@
 package com.example.order.execution.controller;
 
-
 import com.example.order.execution.models.Order;
 import com.example.order.execution.models.OrderRequest;
 import com.example.order.execution.services.OrderFactory;
 import com.example.order.execution.services.OrderService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -30,6 +27,6 @@ public class OrderController {
                 request.getStopPrice()
         );
         orderService.submitOrder(order);
-        return ResponseEntity.ok("✅ Order placed: " + request.getId());
+        return  new ResponseEntity("order placed successfully", HttpStatus.OK);
     }
 }
