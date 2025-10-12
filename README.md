@@ -68,6 +68,7 @@ The modules must be started in the following order:
    ```
 
    The order management service will start.
+   The UI will be server at the order management port.
 
 ## Basic APIs
 Here are some basic APIs you can use to interact with the system:
@@ -93,6 +94,17 @@ Here are some basic APIs you can use to interact with the system:
    }
    ```
 
+### Streaming APIs
+
+1. **Live Streaming price**  
+   **GET** `/streaming-price/prices`  
+   **Response**:
+   ```json
+   {
+      "data":"1.121400184622543"
+   }
+   ```
+   
 ## Notes
 - Ensure all modules are running in the correct sequence to avoid errors.
 - The FIX server handles incoming FIX messages and sends execution reports.
