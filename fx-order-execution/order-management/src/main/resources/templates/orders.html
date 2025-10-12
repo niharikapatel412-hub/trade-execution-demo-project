@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">FX Order Execution</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f9fb;
+      margin: 40px;
+      color: #222;
+    }
+    h1 { color: #0074D9; }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background: #0074D9;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    button:hover { background: #005fa3; }
+    .price {
+      font-size: 1.4em;
+      color: #2ECC40;
+      margin-bottom: 20px;
+    }
+    .response {
+      background: #e7f9ed;
+      border: 1px solid #2ECC40;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${pageTitle}">FX Order Execution</h1>
+
+    <div>
+        <strong>Live EUR/USD Price:</strong>
+        <div id="price" class="price">Loading...</div>
+    </div>
+
+    <form id="orderForm">
+        <label>Order ID</label>
+        <input type="text" id="orderId" value="ORD123">
+
+        <label>Order Type</label>
+        <select id="orderType">
+            <option value="LIMIT">LIMIT</option>
+            <option value="STOP_LIMIT">STOP_LIMIT</option>
+        </select>
+
+        <label>Quantity</label>
+        <input type="number" id="quantity" value="100">
+
+        <label>Price</label>
+        <input type="number" id="priceInput" step="0.0001" value="1.1200">
+
+        <label>Stop Price (optional)</label>
+        <input type="number" id="stopPrice" step="0.0001">
+
+        <button type="submit">Place Order</button>
+    </form>
+
+    <div id="responseBox" class="response"></div>
+</div>
+
+<script>
+    const priceDiv = document.getElementById('price');
+    const form = document.getElementById('orderForm');
+    const responseBox = document.getElementById('responseBox');
+
+    async function updatePrice() {
+      try {
+        const res = await fetch('http://localhost:8085/streaming-price/prices/latest');
+        const val = await res.text();
+        priceDiv.textContent = parseFloat(val).toFixed(5);
+      } catch {
+        priceDiv.textContent = "Price feed unavailable";
+      }
+    }
+    setInterval(updatePrice, 2000);
+    updatePrice();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const order = {
+        id: document.getElementById('orderId').value,
+        type: document.getElementById('orderType').value,
+        quantity: parseFloat(document.getElementById('quantity').value),
+        price: parseFloat(document.getElementById('priceInput').value),
+        stopPrice: parseFloat(document.getElementById('stopPrice').value) || null
+      };
+      try {
+        const res = await fetch('/orders/place', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(order)
+        });
+        const text = await res.text();
+        responseBox.style.display = 'block';
+        responseBox.textContent = text;
+      } catch (err) {
+        responseBox.style.display = 'block';
+        responseBox.textContent = 'Error placing order.';
+      }
+    });
+  </script>
+</body>
+</html>

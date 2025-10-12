@@ -43,7 +43,12 @@ public abstract class Order {
     public abstract boolean isCompleted();
 
     public void markAsSubmitted() {
+        this.status = OrderStatus.SUBMITTED;
     }
 
+
+    public void markAsPending() {
+        this.status = OrderStatus.PENDING;
+    }
 
 }

@@ -1,14 +1,9 @@
 package com.example.order.execution.services;
 
-import com.example.order.execution.client.FixMessage;
-import com.example.order.execution.client.FixOrder;
-import com.example.order.execution.client.FixSession;
-import com.example.order.execution.client.SolaceSubscriber;
-
-import com.example.order.execution.models.Order;
-import com.example.order.execution.models.OrderStatus;
-import com.example.order.execution.models.Price;
+import com.example.order.execution.client.*;
+import com.example.order.execution.models.*;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -16,12 +11,12 @@ import org.springframework.web.client.RestTemplate;
 import java.util.concurrent.*;
 
 @Service
+@Slf4j
 public class OrderService {
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     private final ConcurrentLinkedQueue<Order> pendingOrders = new ConcurrentLinkedQueue<>();
     private final ConcurrentMap<String, FixOrder> orders = new ConcurrentHashMap<>();
     private final FixSession fixSession;
-
     private final RestTemplate restTemplate;
 
     public OrderService(FixSession fixSession, RestTemplateBuilder builder) {
@@ -31,32 +26,19 @@ public class OrderService {
     }
 
     @PostConstruct
-    public void subscribeToPrices() {
-
+    public void startPriceSubscription() {
         SolaceSubscriber.subscribeToPriceUpdates(this, restTemplate);
     }
 
+    /**
+     * Add a new order into pending list (will trigger when price condition met)
+     */
     public void submitOrder(Order order) {
-        pendingOrders.add(order);
-    }
-
-    public void processPrice(Price price) {
-        for (Order order : pendingOrders) {
-            executor.submit(() -> {
-                if (!order.isCompleted() && order.getStatus() == OrderStatus.PENDING) {
-                    if (order.shouldExecute(price)) {
-                        System.out.println("[OrderService] Executing order " + order.getOrderId() +
-                                " at price " + price.getValue());
-                        executeOrder(order);
-                        order.markAsSubmitted();   // prevent duplicate execution
-                    }
-                }
-            });
+        if (orders.containsKey(order.getOrderId())) {
+            log.info("[OrderService] Duplicate order ID " + order.getOrderId() + " ignored.");
+            return;
         }
-    }
 
-
-    private void executeOrder(Order order) {
         FixOrder fixOrder = new FixOrder(
                 order.getOrderId(),
                 "EUR/USD",
@@ -66,59 +48,54 @@ public class OrderService {
                 order.getStopPrice()
         );
 
-        orders.put(order.getOrderId(), fixOrder); // ✅ Track order for status updates
+        orders.put(order.getOrderId(), fixOrder);
+        pendingOrders.add(order);
+        order.markAsPending();
 
-        fixOrder.markAsSubmitted();
+        log.info("[OrderService] New order queued orderId={} type={} price={} stop={}",
+                order.getOrderId(), order.getType(), order.getPrice(), order.getStopPrice());
+
+    }
+
+    /**
+     * Called when new market price arrives
+     */
+    public void processPrice(Price price) {
+        for (Order order : pendingOrders) {
+            executor.submit(() -> {
+                if (order.getStatus() == OrderStatus.PENDING && order.shouldExecute(price)) {
+                    log.info("[OrderService] Triggering order ={} at market ={}",
+                            order.getOrderId(), price.getValue());
+                    executeOrder(order);
+                    order.markAsSubmitted();
+                    pendingOrders.remove(order);
+                }
+            });
+        }
+    }
+
+    /**
+     * Actually send FIX message downstream
+     */
+    private void executeOrder(Order order) {
+        FixOrder fixOrder = orders.get(order.getOrderId());
+        if (fixOrder == null) {
+            log.error("[OrderService] Missing FIX mapping for = {} " ,order.getOrderId());
+            return;
+        }
 
         FixMessage msg = fixOrder.toFixMessage();
         fixSession.sendFixMessage(msg);
 
-        System.out.println("[OrderService] Sent order " + order.getOrderId() + " to FIX. Waiting for execution report...");
+        log.info("[OrderService] Sent FIX order = {} {}",
+                order.getOrderId(), order.getType());
     }
 
-
-//    private void onFixMessageReceived(String fixMsg) {
-//        System.out.println("[FIX Msg Received] " + fixMsg);
-//        FixMessage msg = FixMessage.parse(fixMsg);
-//
-//        // Only handle execution reports (35=8)
-//        if ("8".equals(msg.getMsgType())) {
-//            String clOrdId = msg.getField("11");  // ClOrdID
-//            FixOrder order = orders.get(clOrdId);
-//
-//            if (order != null) {
-//                String ordStatus = msg.getField("39"); // OrdStatus tag
-//                if (ordStatus != null) {
-//                    switch (ordStatus) {
-//                        case "0" -> order.getStatus().equals(OrderStatus.SUBMITTED);  // New
-//                        case "1" -> order.getStatus().equals(OrderStatus.SUBMITTED);  // Partially filled
-//                        case "2" -> order.getStatus().equals(OrderStatus.COMPLETED);  // Filled
-//                        case "4" -> order.getStatus().equals( OrderStatus.CANCELLED);  // Cancelled
-//                        case "8" -> order.getStatus().equals (OrderStatus.REJECTED);   // Rejected
-//                    }
-//                }
-//
-//                // Print debug info
-//                String execType = msg.getField("150"); // ExecType
-//                String lastQty  = msg.getField("32");  // LastQty
-//                String lastPx   = msg.getField("31");  // LastPx
-//                System.out.printf(
-//                        "[Order %s] ExecType=%s Status=%s LastQty=%s LastPx=%s%n",
-//                        clOrdId, execType, order.getStatus(), lastQty, lastPx
-//                );
-//
-//                // If completed, remove from active map
-//                if (order.isCompleted()) {
-//                    orders.remove(order.getOrderId());
-//                    order.onOrderCompleted();
-//                    System.out.println("[OrderService] Order " + clOrdId + " completed. Status=" + order.getStatus());
-//                }
-//            }
-//        }
-//    }
-
+    /**
+     * Handles execution reports from FIX downstream
+     */
     private void onFixMessageReceived(String fixMsg) {
-        System.out.println("[FIX Msg Received] " + fixMsg);
+        log.info("[FIX Msg Received] " , fixMsg);
         FixMessage msg = FixMessage.parse(fixMsg);
 
         if ("8".equals(msg.getMsgType())) { // Execution Report
@@ -129,17 +106,25 @@ public class OrderService {
                 order.updateStatus(msg);
 
                 if (order.isCompleted()) {
-                    orders.remove(order.getOrderId());
+                    orders.remove(clOrdId);
                     order.onOrderCompleted();
-                    System.out.println("[OrderService] Order " + clOrdId + " completed. Final status=" + order.getStatus());
+                    log.info("[OrderService] Order with clOrdId={} completed. Status= {}",
+                            clOrdId, order.getStatus());
                 }
             } else {
-                System.err.println("[OrderService] Execution report for unknown orderId=" + clOrdId);
+                log.error("[OrderService] Received report for unknown orderId={}" , clOrdId);
             }
         }
     }
 
+    public FixOrder getOrderById(String id) throws Exception {
 
+            FixOrder order = orders.get(id);
+            if(order == null){
+                log.info("[OrderService] No order found with ID ={} " , id);
+                throw new Exception("Order not found");
 
+        }
+            return order;
+    }
 }
-

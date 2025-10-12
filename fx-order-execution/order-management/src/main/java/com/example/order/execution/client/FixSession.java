@@ -1,5 +1,6 @@
 package com.example.order.execution.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 @Service
+@Slf4j
 public class FixSession {
     private final String host;
     private final int port;
@@ -47,7 +49,7 @@ public class FixSession {
             });
             readerThread.start();
 
-           System.out.println("[FIX Session] Connected to downstream execution system");
+           log.info("[FIX Session] Connected to downstream execution system");
         } catch (IOException e) {
             throw new RuntimeException("Failed to connect to FIX server", e);
         }
@@ -55,8 +57,8 @@ public class FixSession {
 
     public void sendFixMessage(FixMessage msg) {
         String fixStr = msg.serialize();
-       System.out.println("[Sending FIX] " + fixStr);
-        out.println(fixStr);
+       log.info("[Sending FIX] " + fixStr);
+
     }
 
     public void setMessageListener(Consumer<String> listener) {
@@ -67,9 +69,9 @@ public class FixSession {
         running = false;
         try {
             if (socket != null) socket.close();
-           System.out.println("[FIX Session] Closed");
+           log.info("[FIX Session] Closed");
         } catch (IOException e) {
-            e.printStackTrace();
+           log.error("[FIX Session] Error closing socket", e);
         }
     }
 }
