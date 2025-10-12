@@ -52,8 +52,9 @@ public class OrderService {
         pendingOrders.add(order);
         order.markAsPending();
 
-         log.info("[OrderService] New order %s queued (%s) price=%.5f stop=%.5f%n",
+        log.info("[OrderService] New order queued orderId={} type={} price={} stop={}",
                 order.getOrderId(), order.getType(), order.getPrice(), order.getStopPrice());
+
     }
 
     /**
@@ -63,7 +64,7 @@ public class OrderService {
         for (Order order : pendingOrders) {
             executor.submit(() -> {
                 if (order.getStatus() == OrderStatus.PENDING && order.shouldExecute(price)) {
-                    System.out.printf("[OrderService] Triggering order %s at market %.5f%n",
+                    log.info("[OrderService] Triggering order ={} at market ={}",
                             order.getOrderId(), price.getValue());
                     executeOrder(order);
                     order.markAsSubmitted();
@@ -79,14 +80,14 @@ public class OrderService {
     private void executeOrder(Order order) {
         FixOrder fixOrder = orders.get(order.getOrderId());
         if (fixOrder == null) {
-            log.error("[OrderService] Missing FIX mapping for " + order.getOrderId());
+            log.error("[OrderService] Missing FIX mapping for = {} " ,order.getOrderId());
             return;
         }
 
         FixMessage msg = fixOrder.toFixMessage();
         fixSession.sendFixMessage(msg);
 
-        log.info("[OrderService] Sent FIX order %s (%s)%n",
+        log.info("[OrderService] Sent FIX order = {} {}",
                 order.getOrderId(), order.getType());
     }
 
@@ -94,7 +95,7 @@ public class OrderService {
      * Handles execution reports from FIX downstream
      */
     private void onFixMessageReceived(String fixMsg) {
-        log.info("[FIX Msg Received] " + fixMsg);
+        log.info("[FIX Msg Received] " , fixMsg);
         FixMessage msg = FixMessage.parse(fixMsg);
 
         if ("8".equals(msg.getMsgType())) { // Execution Report
@@ -107,11 +108,11 @@ public class OrderService {
                 if (order.isCompleted()) {
                     orders.remove(clOrdId);
                     order.onOrderCompleted();
-                    log.info("[OrderService] Order %s completed. Status=%s%n",
+                    log.info("[OrderService] Order with clOrdId={} completed. Status= {}",
                             clOrdId, order.getStatus());
                 }
             } else {
-                log.error("[OrderService] Received report for unknown orderId=" + clOrdId);
+                log.error("[OrderService] Received report for unknown orderId={}" , clOrdId);
             }
         }
     }
@@ -120,7 +121,7 @@ public class OrderService {
 
             FixOrder order = orders.get(id);
             if(order == null){
-                log.info("[OrderService] No order found with ID " + id);
+                log.info("[OrderService] No order found with ID ={} " , id);
                 throw new Exception("Order not found");
 
         }

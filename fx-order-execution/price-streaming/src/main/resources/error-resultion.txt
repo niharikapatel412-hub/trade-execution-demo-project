@@ -1,0 +1,31 @@
+Documenting all the error i came across while building the project and resolutions
+
+1. Error: "Name for argument of type [java.lang.String] not specified, and parameter name information not available via reflection. Ensure that the compiler uses the '-parameters' flag."
+Resolution:
+ 1. @PathVariable annotation requires parameter names to be available at runtime.
+ By default, Java does not retain parameter names unless compiled with the `-parameters` flag.
+ to resolve annate the path variables with their name eg : @PathVariable("id") String id in my case @PathVariable("from") String from and to @PathVariable("to") String to.
+ Alternate solution
+ Add the following to the maven compiler plugin configuration in pom.xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <version>3.8.1</version>
+    <configuration>
+        <source>11</source>
+        <target>11</target>
+        <compilerArgs>
+            <arg>-parameters</arg>
+        </compilerArgs>
+    </configuration>
+
+=================================================================================================
+2. Error: "No qualifying bean of type 'org.springframework.web.reactive.function.client.RestTemplate' available"
+Resolution:
+ Add the RestTemplate bean in a configuration class or main application class
+ @Bean
+ public RestTemplate restTemplate() {
+     return new RestTemplate();
+ }
+
+=================================================================================================

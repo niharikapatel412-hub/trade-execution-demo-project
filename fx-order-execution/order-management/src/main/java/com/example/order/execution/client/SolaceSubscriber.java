@@ -11,19 +11,21 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class SolaceSubscriber {
 
+    private static final String apiURL = "http://localhost:8085/streaming-price/prices/latest";
+
     public static void subscribeToPriceUpdates(OrderService oms, RestTemplate restTemplate) {
         new Thread(() -> {
             try {
                 while (true) {
                     // Call Price microservice REST API
                     Double latestPrice = restTemplate.getForObject(
-                            "http://localhost:8083/streaming-price/prices/latest",
+                            apiURL,
                             Double.class
                     );
 
                     if (latestPrice != null) {
                         oms.processPrice(new Price(latestPrice));
-                        log.info("[OrderService] Processed price: " + latestPrice);
+                       // log.info("[OrderService] Processed price: " + latestPrice);
                     }
 
                     Thread.sleep(2000); // Poll every 2 seconds
